@@ -1,0 +1,87 @@
+#!/bin/bash
+
+# build:  fetch the sources and build them.  We also install, presuming that's why you built.
+#         Needs sudo, except on Cygwin.
+
+
+dddVersion="3.3.9"  # Yes, this isn't the latest.  But it works, and the latest does not.
+dddFetchUrl="http://ftp.gnu.org/gnu/ddd/ddd-${dddVersion}.tar.gz"
+
+bashdbVersion="4.2-0.8"
+bashdbFetchUrl="http://sourceforge.net/projects/bashdb/files/bashdb/${bashdbVersion}/bashdb-${bashdbVersion}.tar.gz/download"
+
+function errExit {
+	echo "ERROR: $@" >&2
+	exit 1
+}
+
+
+function our_ddd_installed {
+	# If there's another version of ddd installed, prompt the user: we want them
+	# to remove it, and we're not going to jump through a bunch of hoops to
+	# do that for them:
+	if which ddd >/dev/null; then
+		local curVersion=$(ddd --version | awk '/^GNU DDD/ {print $3}')
+		if [[ "$curVersion" != "$dddVersion" ]]; then
+			echo -n "You have ddd $curVersion installed, but we like $dddVersion.   In particular, it is known that 3.3.12 has "
+			echo -n "problems working with bashdb.  So we recommend that you manually uninstall your current version of ddd "
+			echo    "and then try this script again."
+			read -n 1 "Would you like to e(X)it now or (c)ontinue anyway?" res
+			case $res in
+				[cC])  
+						true
+						return;  # They want to go ahead, even after the warning.
+						;;
+				*)
+						echo "Cancelled by user."
+						exit 1
+						;;
+			esac
+		else
+			true
+			return  # They already have our favorite version.
+		fi
+	else
+		false  # There is no ddd installed.
+		return
+	fi
+}
+
+
+function build_ddd {
+	if our_ddd_installed; then
+		echo "Our favorite ddd is already installed."
+		return
+	fi
+	fetch_our_ddd "$dddFetchUrl"
+	patch_our_ddd "$dddVersion"
+	build_our_ddd "$dddVersion"
+
+}
+
+
+function build_bashdb {
+	if which bashdb >/dev/null; then
+		# We're more forgiving about bashdb versions, as it doesn't need patching or kid-gloves:
+		echo "Bashdb is already installed."
+		return
+	fi
+	if get_bashdb_from_package_manager; then
+		echo "Bashdb installed from package manager"
+		return
+	fi
+	fetch_bashdb_source "$bashdbFetchUrl"
+	build_bashdb "$bashdbVersion"
+}
+
+
+function main {
+	build_bashdb
+	build_ddd
+}
+
+if [[ -z $sourceMe ]]; then
+	main "$@"
+fi
+
+
