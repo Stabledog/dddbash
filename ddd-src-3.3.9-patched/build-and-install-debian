@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# build and install ddd 
+
+function errExit {
+    echo "ERROR: $1" >&2
+    exit 1
+}
+
+
+sudo apt-get install libmotif-dev flex || errExit ""
+
+./configure || errExit ""
+
+make || errExit ""
+
+sudo make install || errExit ""
+
+echo "
+Install completed. Use this command line to launch bashdb+ddd:
+
+ddd --debugger /usr/bin/bashdb -- {scriptname} {params}
+
+"
+

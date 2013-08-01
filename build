@@ -5,10 +5,16 @@
 
 
 dddVersion="3.3.9"  # Yes, this isn't the latest.  But it works, and the latest does not.
-dddFetchUrl="http://ftp.gnu.org/gnu/ddd/ddd-${dddVersion}.tar.gz"
+dddBase="ddd-${dddVersion}"
+dddTarball="${dddBase}.tar.gz"
+dddFetchUrl="http://ftp.gnu.org/gnu/ddd/${dddTarball}"
 
 bashdbVersion="4.2-0.8"
-bashdbFetchUrl="http://sourceforge.net/projects/bashdb/files/bashdb/${bashdbVersion}/bashdb-${bashdbVersion}.tar.gz/download"
+bashdbBase="bashdb-${bashdbVersion}"
+bashdbTarball="${bashdbBase}.tar.gz"
+bashdbFetchUrl="http://sourceforge.net/projects/bashdb/files/bashdb/${bashdbVersion}/${bashdbTarball}/download"
+
+packageMgr="" # yum or apt-get?
 
 function errExit {
 	echo "ERROR: $@" >&2
@@ -26,7 +32,7 @@ function our_ddd_installed {
 			echo -n "You have ddd $curVersion installed, but we like $dddVersion.   In particular, it is known that 3.3.12 has "
 			echo -n "problems working with bashdb.  So we recommend that you manually uninstall your current version of ddd "
 			echo    "and then try this script again."
-			read -n 1 "Would you like to e(X)it now or (c)ontinue anyway?" res
+			read -n 1 -p "Would you like to e(X)it now or (c)ontinue anyway?" res
 			case $res in
 				[cC])  
 						true
@@ -47,18 +53,85 @@ function our_ddd_installed {
 	fi
 }
 
+#  # TODO: use this logic.  Trouble is, the original 3.3.9 doesn't have our patch to make
+# it compile with modern gcc.  So for now, we have the pre-patched ddd source in our ./ddd-src-3.3.9-patched
+# dir.   that's not the best solution, as we can't easily pull from upstream.
+function fetch_our_ddd {
+	local url="$1"
+	if ! which wget; then 
+		errExit "wget is not installed.  Sorry. Install it with your package manager then try again."
+	fi
+	pushd ./temp
+
+	wget "$url" --output-document=$dddTarball || errExit "Unable to download ddd source from $url"
+	tar xvf $dddTarball || errExit "Failed to extract $dddTarball"
+	echo "ddd source extracted to $dddBase"
+	popd
+	true
+}
+
+#  # TODO: use this logic.  Trouble is, the original 3.3.9 doesn't have our patch to make
+# it compile with modern gcc.  So for now, we have the pre-patched ddd source in our ./ddd-src-3.3.9-patched
+# dir.   that's not the best solution, as we can't easily pull from upstream.
+function patch_our_ddd {
+	# the preferred ddd version has a compile failure with modern gcc's, which we must patch to
+	# continue:
+	echo -n ""
+}
+
+
+function build_our_ddd {
+	pushd ./ddd-src-3.3.9-patched || errExit "Can't cd into ddd-src-3.3.9-patched"
+	# Are we on red-hat stuff or debian stuff?
+	if [[ $packageMgr=="yum" ]]; then
+		./build-and-install-rhel || exit 1
+	else
+		./build-and-install-debian || exit 1
+	fi
+	popd
+}
 
 function build_ddd {
 	if our_ddd_installed; then
 		echo "Our favorite ddd is already installed."
 		return
 	fi
-	fetch_our_ddd "$dddFetchUrl"
-	patch_our_ddd "$dddVersion"
-	build_our_ddd "$dddVersion"
+#	fetch_our_ddd "$dddFetchUrl"
+#	patch_our_ddd "$dddVersion"
+	build_our_ddd 
 
 }
 
+
+function get_bashdb_from_package_manager {
+	echo "Not yet implemented."
+	false
+}
+
+function fetch_bashdb_source {
+	local url="$1"
+	if ! which wget; then 
+		errExit "wget is not installed.  Sorry. Install it with your package manager then try again."
+	fi
+	pushd ./temp
+	wget "$url" --output-document=$bashdbTarball || errExit "Unable to download bashdb source from $url"
+	tar xvf $bashdbTarball || errExit "Failed to extract $bashdbTarball"
+	
+	echo "bashdb source extracted to $bashdbBase"
+	popd
+	true
+}
+
+function compile_bashdb {
+	cd ./temp/${bashdbBase} || exit 1
+	./configure || exit 1
+	make || exit 1
+	sudo make install || exit 1
+	if ! which bashdb; then
+		errExit "Can't find bashdb on the path after build!"
+	fi
+	echo "bashdb compiled and installed successfully."
+}
 
 function build_bashdb {
 	if which bashdb >/dev/null; then
@@ -71,11 +144,25 @@ function build_bashdb {
 		return
 	fi
 	fetch_bashdb_source "$bashdbFetchUrl"
-	build_bashdb "$bashdbVersion"
+	compile_bashdb "$bashdbVersion"
 }
 
 
 function main {
+	if [[ ! -f ./dddbash-root ]]; then
+		errExit "This script must run from the dddbash code root"
+	fi
+	if [[ -d ./temp ]]; then
+		rm -rf ./temp || errExit "Unable to purge ./temp"
+	fi
+	mkdir -p ./temp
+	if which apt-get; then
+		packageMgr="apt-get"
+	elif which yum; then
+		packageMgr="yum"
+	else
+		errExit "We can't find a supported package manager"
+	fi
 	build_bashdb
 	build_ddd
 }
