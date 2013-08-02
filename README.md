@@ -17,5 +17,8 @@ to debug bash scripts don't have to re-learn everything I have learned in my mul
 behave.
 
 ======
-To install, clone the repository, and then ==cd path/to/working-copy; ./build==
+To install, clone the repository, and then 
+
+  cd path/to/working-copy
+  ./build
 
