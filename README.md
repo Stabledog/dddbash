@@ -20,5 +20,6 @@ behave.
 To install, clone the repository, and then 
 
   cd path/to/working-copy
+  
   ./build
 
