@@ -13,7 +13,7 @@ is cumbersome, and there's little guidance available on the web about how to get
 do happen to get them working.
 
 This project is intended to rectify that: to provide a relatively clean way to integrate bashdb+ddd so that those wishing
-to debug bash scripts don't have to re-learn everything I have learned in my multi-year quest to make them
+to debug bash scripts in a GUI don't have to re-learn everything I have learned in my quest to make them
 behave.
 
 ======
