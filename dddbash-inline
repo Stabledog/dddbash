@@ -1,0 +1,8 @@
+# dddbash-inline
+# inline version of dddbash, i.e. the script is composed on the fly by concatenating
+# the params, i.e.
+#
+#
+export BASHDB=$(which bashdb)
+ddd --debugger $BASHDB -c "$@"
+

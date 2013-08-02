@@ -147,6 +147,12 @@ function build_bashdb {
 	compile_bashdb "$bashdbVersion"
 }
 
+function installLinks {
+	# We want our dddbash and dddbash-inline scripts on the path:
+	sudo ln -s $PWD/dddbash /usr/local/bin/dddbash 
+	sudo ln -s $PWD/dddbash-inline /usr/local/bin/dddbash-inline
+	
+}
 
 function main {
 	if [[ ! -f ./dddbash-root ]]; then
@@ -165,10 +171,13 @@ function main {
 	fi
 	build_bashdb
 	build_ddd
+
+	installLinks
 }
 
 if [[ -z $sourceMe ]]; then
 	main "$@"
+	helloMsg
 fi
 
 
