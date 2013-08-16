@@ -81,7 +81,7 @@ function patch_our_ddd {
 
 
 function build_our_ddd {
-	pushd ./ddd-src-3.3.9-patched || errExit "Can't cd into ddd-src-3.3.9-patched"
+	pushd ./ddd-src-3.3.9-patched || errExit "Can't cd into ddd-src-3.3.9-patched, pwd=$(pwd)"
 	# Are we on red-hat stuff or debian stuff?
 	if [[ $packageMgr=="yum" ]]; then
 		./build-and-install-rhel || exit 1
@@ -173,6 +173,10 @@ function main {
 	build_ddd
 
 	installLinks
+}
+
+function helloMsg {
+	echo "dddbash installed successfully."
 }
 
 if [[ -z $sourceMe ]]; then

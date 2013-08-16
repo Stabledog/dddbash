@@ -1,2 +1,19 @@
-(sudo yum install -y g++ gcc-c++ libX11-devel lesstif-devel ) || exit 1
+epelFedoraLink="http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
+
+res=$(sudo rpm -Uvh "${epelFedoraLink}" 2>&1)
+if [[ $? -ne 0 ]]; then
+	# rpm failed.  But maybe because epel is already installed?
+	if ! echo "$res" | grep 'is already installed'; then
+		echo "Error installing EPEL repository" >&2
+		exit 1
+	fi
+fi
+
+
+packages="gcc-c++ flex bison libXt libXt-devel libX11-devel lesstif-devel"
+for pkg in $packages; do
+	sudo yum install -y $pkg || exit 1
+done
 ./configure && make && sudo make install
+
+
