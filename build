@@ -154,6 +154,16 @@ function installLinks {
 	
 }
 
+function setupDefaultDddCfg {
+	# If the user doesn't have a ~/.ddd/init, we'll provide one a bit 
+	# friendlier than the default:
+
+	if [[ ! -f ${HOME}/.ddd/init ]]; then
+		mkdir -p ${HoME}/.ddd
+		cp .ddd-init-baseline ${HOME}/.ddd/init
+	fi
+}
+
 function main {
 	if [[ ! -f ./dddbash-root ]]; then
 		errExit "This script must run from the dddbash code root"
@@ -173,6 +183,7 @@ function main {
 	build_ddd
 
 	installLinks
+	setupDefaultDddCfg
 }
 
 function helloMsg {
