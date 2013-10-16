@@ -35,3 +35,10 @@ termcap/Makefile
 termcap/config.status
 themes/Makefile
 vsllib/Makefile
+ddd/ddd.info.txt
+ddd/ddd.info.txt.gz
+ddd/ddd.info.txt.gz.C
+ddd/rxscan.C
+ddd/vsl-gramma.C
+ddd/vsl-gramma.h
+ddd/vsl-lex.C

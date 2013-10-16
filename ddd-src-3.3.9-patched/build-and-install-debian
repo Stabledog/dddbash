@@ -8,7 +8,7 @@ function errExit {
 }
 
 
-sudo apt-get install libmotif-dev flex || errExit ""
+sudo apt-get install flex bison gcc g++ libx11-dev libxt-dev libmotif-dev flex || errExit ""
 
 ./configure || errExit ""
 

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x
 # build:  fetch the sources and build them.  We also install, presuming that's why you built.
 #         Needs sudo, except on Cygwin.
 
@@ -14,7 +15,7 @@ bashdbBase="bashdb-${bashdbVersion}"
 bashdbTarball="${bashdbBase}.tar.gz"
 bashdbFetchUrl="http://sourceforge.net/projects/bashdb/files/bashdb/${bashdbVersion}/${bashdbTarball}/download"
 
-packageMgr="" # yum or apt-get?
+export packageMgr="" # yum or apt-get?
 
 function errExit {
 	echo "ERROR: $@" >&2
@@ -83,7 +84,7 @@ function patch_our_ddd {
 function build_our_ddd {
 	pushd ./ddd-src-3.3.9-patched || errExit "Can't cd into ddd-src-3.3.9-patched, pwd=$(pwd)"
 	# Are we on red-hat stuff or debian stuff?
-	if [[ $packageMgr=="yum" ]]; then
+	if [[ "$packageMgr" != "apt-get" ]]; then
 		./build-and-install-rhel || exit 1
 	else
 		./build-and-install-debian || exit 1
@@ -172,13 +173,14 @@ function main {
 		rm -rf ./temp || errExit "Unable to purge ./temp"
 	fi
 	mkdir -p ./temp
-	if which apt-get; then
+	if which apt-get >/dev/null; then
 		packageMgr="apt-get"
 	elif which yum; then
 		packageMgr="yum"
 	else
 		errExit "We can't find a supported package manager"
 	fi
+	echo "Package manager is $packageMgr"
 	build_bashdb
 	build_ddd
 
