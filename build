@@ -22,12 +22,20 @@ function errExit {
 	exit 1
 }
 
+function xwhich {
+	# Extend which to make sure we're searching /usr/local/bin and $HOME/bin:
+	(
+		PATH=$PATH:/usr/local/bin:$HOME/bin
+		which $1
+	)
+}
+
 
 function our_ddd_installed {
 	# If there's another version of ddd installed, prompt the user: we want them
 	# to remove it, and we're not going to jump through a bunch of hoops to
 	# do that for them:
-	if which ddd >/dev/null; then
+	if xwhich ddd >/dev/null; then
 		local curVersion=$(ddd --version | awk '/^GNU DDD/ {print $3}')
 		if [[ "$curVersion" != "$dddVersion" ]]; then
 			echo -n "You have ddd $curVersion installed, but we like $dddVersion.   In particular, it is known that 3.3.12 has "
@@ -59,7 +67,7 @@ function our_ddd_installed {
 # dir.   that's not the best solution, as we can't easily pull from upstream.
 function fetch_our_ddd {
 	local url="$1"
-	if ! which wget; then 
+	if ! xwhich wget; then 
 		errExit "wget is not installed.  Sorry. Install it with your package manager then try again."
 	fi
 	pushd ./temp
@@ -111,7 +119,7 @@ function get_bashdb_from_package_manager {
 
 function fetch_bashdb_source {
 	local url="$1"
-	if ! which wget; then 
+	if ! xwhich wget; then 
 		errExit "wget is not installed.  Sorry. Install it with your package manager then try again."
 	fi
 	pushd ./temp
@@ -128,14 +136,17 @@ function compile_bashdb {
 	./configure || exit 1
 	make || exit 1
 	sudo make install || exit 1
-	if ! which bashdb; then
-		errExit "Can't find bashdb on the path after build!"
-	fi
+	(
+		PATH=$PATH:/usr/local/bin
+		if ! xwhich bashdb; then
+			errExit "Can't find bashdb on the path after build!"
+		fi
+	) || exit 1
 	echo "bashdb compiled and installed successfully."
 }
 
 function build_bashdb {
-	if which bashdb >/dev/null; then
+	if xwhich bashdb >/dev/null; then
 		# We're more forgiving about bashdb versions, as it doesn't need patching or kid-gloves:
 		echo "Bashdb is already installed."
 		return
