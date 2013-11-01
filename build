@@ -5,6 +5,7 @@ set -x
 #         Needs sudo, except on Cygwin.
 
 
+buildRoot=""
 dddVersion="3.3.9"  # Yes, this isn't the latest.  But it works, and the latest does not.
 dddBase="ddd-${dddVersion}"
 dddTarball="${dddBase}.tar.gz"
@@ -90,6 +91,7 @@ function patch_our_ddd {
 
 
 function build_our_ddd {
+	cd $buildRoot
 	pushd ./ddd-src-3.3.9-patched || errExit "Can't cd into ddd-src-3.3.9-patched, pwd=$(pwd)"
 	# Are we on red-hat stuff or debian stuff?
 	if [[ "$packageMgr" != "apt-get" ]]; then
@@ -101,6 +103,7 @@ function build_our_ddd {
 }
 
 function build_ddd {
+	cd $buildRoot
 	if our_ddd_installed; then
 		echo "Our favorite ddd is already installed."
 		return
@@ -180,6 +183,7 @@ function main {
 	if [[ ! -f ./dddbash-root ]]; then
 		errExit "This script must run from the dddbash code root"
 	fi
+	buildRoot=$PWD
 	if [[ -d ./temp ]]; then
 		rm -rf ./temp || errExit "Unable to purge ./temp"
 	fi
