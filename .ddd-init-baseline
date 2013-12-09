@@ -1,3 +1,4 @@
+ssh -Y -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@pigs-green.bacon.illumina.com cat .ddd/init
 ! DO NOT ADD ANYTHING BELOW THIS LINE -- DDD WILL OVERWRITE IT
 Ddd*dddinitVersion: 3.3.9
 
@@ -5,9 +6,9 @@ Ddd*dddinitVersion: 3.3.9
 Ddd*initialSession: 
 
 ! Debugger settings.
-Ddd*autoDebugger: on
+Ddd*autoDebugger: off
 Ddd*debugger: gdb
-Ddd*useSourcePath: off
+Ddd*useSourcePath: on
 ! Ddd*bashSettings: 
 ! Ddd*dbgSettings: 
 ! Ddd*dbxSettings: 
@@ -36,7 +37,7 @@ Ddd*allRegisters: off
 ! Ddd*maxUndoSize: 2000000
 
 ! Misc preferences.
-Ddd*keyboardFocusPolicy: POINTER
+Ddd*keyboardFocusPolicy: EXPLICIT
 Ddd*statusAtBottom: on
 Ddd*suppressWarnings: on
 Ddd*warnIfLocked: off
@@ -90,7 +91,7 @@ Ddd*valueDocs: on
 
 ! Helpers.
 ! Ddd*editCommand: ${XEDITOR-false} +@LINE@ @FILE@ || xterm -e ${EDITOR-vi} +@LINE@ @FILE@
-! Ddd*getCoreCommand: 
+! Ddd*getCoreCommand: gcore -o @FILE@ @PID@
 ! Ddd*psCommand: ps x 2> /dev/null || ps -ef 2> /dev/null || ps
 ! Ddd*termCommand: xterm -bg \'grey96\' -fg \'black\' -cr \'DarkGreen\' -fn \'@FONT@\' -title \'DDD: Execution Window\' -e /bin/sh -c
 ! Ddd*uncompressCommand: gzip -d -c
@@ -160,9 +161,9 @@ Ddd*debugCoreDumps: off
 
 ! Window sizes.
 Ddd*graph_edit.height: 100
-Ddd*source_text_w.columns: 130
-Ddd*source_text_w.rows: 33
+Ddd*source_text_w.columns: 80
+Ddd*source_text_w.rows: 31
 Ddd*code_text_w.columns: 80
 Ddd*code_text_w.rows: 4
-Ddd*gdb_w.columns: 130
+Ddd*gdb_w.columns: 80
 Ddd*gdb_w.rows: 5
