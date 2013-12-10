@@ -105,15 +105,15 @@ function dddbash_main {
 	if [[ ${scriptName} =~ / ]]; then
 		# The script name contains a slash, so we convert it to a full path:
 		scriptName="$(readlink -f $scriptName)"
-		trace "stub 1"
+		#trace "stub 1"
 	else
-		trace "stub 2"
+		#trace "stub 2"
 		# it could be in the current dir:
 		if [[ -x ./$scriptName ]]; then
-			trace "stub 2.1"
+			#trace "stub 2.1"
 			scriptName="$PWD/$scriptName"
 		else
-			trace "stub 2.2"
+			#trace "stub 2.2"
 			# Maybe it's on the PATH:
 			local tx=$(which $scriptName)
 			if [[ ! -x "$tx" ]]; then
