@@ -188,13 +188,17 @@ function main {
 		rm -rf ./temp || errExit "Unable to purge ./temp"
 	fi
 	mkdir -p ./temp
-	if which apt-get >/dev/null; then
-		packageMgr="apt-get"
-	elif which yum; then
-		packageMgr="yum"
-	else
-		errExit "We can't find a supported package manager"
-	fi
+	if ! $CYGWIN; then
+        if which apt-get >/dev/null; then
+            packageMgr="apt-get"
+        elif which yum; then
+            packageMgr="yum"
+        else
+            errExit "We can't find a supported package manager"
+        fi
+    else
+        echo "Cygwin detected"
+    fi
 	echo "Package manager is $packageMgr"
 	build_bashdb
 	build_ddd
