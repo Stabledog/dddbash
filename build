@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+#set -x
 # build:  fetch the sources and build them.  We also install, presuming that's why you built.
 #         Needs sudo, except on Cygwin.
 
@@ -15,6 +15,8 @@ bashdbVersion="4.2-0.8"
 bashdbBase="bashdb-${bashdbVersion}"
 bashdbTarball="${bashdbBase}.tar.gz"
 bashdbFetchUrl="http://sourceforge.net/projects/bashdb/files/bashdb/${bashdbVersion}/${bashdbTarball}/download"
+
+[[ -z $CYGWIN ]] && CYGWIN=false
 
 export packageMgr="" # yum or apt-get?
 
@@ -40,9 +42,12 @@ function our_ddd_installed {
 		local curVersion=$(ddd --version | awk '/^GNU DDD/ {print $3}')
 		if [[ "$curVersion" != "$dddVersion" ]]; then
 			echo -n "You have ddd $curVersion installed, but we like $dddVersion.   In particular, it is known that 3.3.12 has "
-			echo -n "problems working with bashdb.  So we recommend that you manually uninstall your current version of ddd "
-			echo    "and then try this script again."
+			echo -n "problems working with bashdb on some Linux distributions.  So we recommend that you manually uninstall "
+			echo -n "your current version of ddd and then try this script again.   Or, you can forge ahead and reinstall dddbash "
+			echo -n "later if you have problems with your current version of ddd. "
+			echo ""
 			read -n 1 -p "Would you like to e(X)it now or (c)ontinue anyway?" res
+			echo ""
 			case $res in
 				[cC])  
 						true
@@ -164,8 +169,8 @@ function build_bashdb {
 
 function installLinks {
 	# We want our dddbash and dddbash-inline scripts on the path:
-	sudo ln -s $PWD/dddbash /usr/local/bin/dddbash 
-	sudo ln -s $PWD/dddbash-inline /usr/local/bin/dddbash-inline
+	sudo ln -sf $PWD/dddbash /usr/local/bin/dddbash 
+	sudo ln -sf $PWD/dddbash-inline /usr/local/bin/dddbash-inline
 	
 }
 
