@@ -2975,12 +2975,12 @@ ddd_exit_t pre_main_loop(int argc, char *argv[])
 	gdbCloseCodeWindowCB(gdb_w, 0, 0);
     }
 
-    if ((!app_data.separate_source_window && have_source_window() || 
-	 !app_data.separate_data_window && have_data_window()) &&
-	(!app_data.debugger_console || app_data.tty_mode))
+    if ( ((!app_data.separate_source_window && have_source_window()) ||
+            (!app_data.separate_data_window && have_data_window())) &&
+            (!app_data.debugger_console || app_data.tty_mode))
     {
-	// We don't need the debugger console, since we have a TTY.
-	gdbCloseCommandWindowCB(gdb_w, 0, 0);
+        // We don't need the debugger console, since we have a TTY.
+        gdbCloseCommandWindowCB(gdb_w, 0, 0);
     }
 
     if (data_disp_shell != 0)
@@ -3947,8 +3947,8 @@ Boolean ddd_setup_done(XtPointer)
 	install_button_tips();
 	fix_status_size();
 
-	if (running_shells() == 0 ||
-	    app_data.annotate && running_shells() == 1)
+	if ((running_shells() == 0) ||
+	    (app_data.annotate && running_shells() == 1))
 	{
 	    // We have no shell (yet).  Be sure to popup at least one shell.
 	    if (app_data.annotate)
@@ -4235,7 +4235,7 @@ void update_options()
 
     set_toggle(set_toolbars_at_bottom_w, app_data.toolbars_at_bottom);
     set_sensitive(set_toolbars_at_bottom_w, separate ||
-		  !app_data.button_images && !app_data.button_captions);
+		  (!app_data.button_images && !app_data.button_captions));
 
     set_toggle(set_tool_buttons_in_toolbar_w,      app_data.command_toolbar);
     set_toggle(set_tool_buttons_in_command_tool_w, !app_data.command_toolbar);
@@ -5453,9 +5453,9 @@ static void BlinkCB(XtPointer client_data, XtIntervalId *id)
 
     if ((blinker_active || set) && app_data.busy_blink_rate > 0)
     {
-	blink_timer = XtAppAddTimeOut(XtWidgetToApplicationContext(led_w),
-				      app_data.busy_blink_rate, BlinkCB,
-				      XtPointer(int(!set)));
+        blink_timer = XtAppAddTimeOut(XtWidgetToApplicationContext(led_w),
+                                    app_data.busy_blink_rate, BlinkCB,
+                                    XtPointer((void*) set ? 1L : 0L ));
     }
 }
 
@@ -5807,7 +5807,7 @@ struct WhenReadyInfo {
 	}
 	else
 	{
-	    memcpy(cbs.event, c.event, sizeof(cbs.event));
+	    memcpy(cbs.event, c.event, sizeof(*cbs.event));
 	    cbs.event = &event;
 	}
     }

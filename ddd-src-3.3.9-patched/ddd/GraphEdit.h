@@ -33,7 +33,7 @@
 #include "BoxPoint.h"
 
 class Graph;
-class GraphGC;
+struct GraphGC;
 class GraphNode;
 
 

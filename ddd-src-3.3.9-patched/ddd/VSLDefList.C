@@ -58,9 +58,12 @@ const Box *VSLDefList::eval(Box *arg) const
 
     if (d == 0)
     {
-	std::ostringstream s;
-	s << *arg;
-	VSLLib::eval_error("no suiting definition for " + f_name() + s);
+        std::ostringstream s;
+        s << *arg;
+        string x=f_name();
+        string y="no suiting definition for ";
+        string z=s.str().c_str();
+        VSLLib::eval_error( y + x + z );
     }
 
     return d ? d->eval(arg) : 0;

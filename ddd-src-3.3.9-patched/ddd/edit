@@ -1,0 +1,6 @@
+
+files=$(for x in C c h; do find *.${x}; done | sort)
+
+
+vim $files
+

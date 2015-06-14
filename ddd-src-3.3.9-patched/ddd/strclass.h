@@ -490,6 +490,7 @@ public:
     unsigned int length() const;
     bool empty() const;
     const char* chars() const;
+    const char* c_str() const { return chars(); }
 
     bool OK() const;
 };
@@ -811,10 +812,8 @@ public:
     friend int split(const string& x, string *res, int maxn, 
 		     const regex& sep);
 
-    friend string common_prefix(const string& x, const string& y, 
-				int startpos = 0);
-    friend string common_suffix(const string& x, const string& y, 
-				int startpos = -1);
+    friend string common_prefix(const string& x, const string& y, int startpos );
+    friend string common_suffix(const string& x, const string& y, int startpos );
     friend string replicate(char c, int n);
     friend string replicate(const string& y, int n);
     friend string join(const string *src, int n, const string& sep);
@@ -865,8 +864,8 @@ public:
     friend std::istream& operator>>(std::istream& s, string& x);
 
     friend int readline(std::istream& s, string& x, 
-			char terminator = '\n',
-			int discard_terminator = 1);
+			char terminator ,
+			int discard_terminator );
 
     // Status
     unsigned int length() const;
@@ -882,6 +881,12 @@ public:
 
     bool OK() const;
 };
+
+string common_suffix(const string& x, const string& y, int startpos=-1 );
+string common_prefix(const string& x, const string& y, int startpos=0 );
+int readline(std::istream& s, string& x, 
+			char terminator ='\n',
+			int discard_terminator=1 );
 
 // Inject names manually to accomodate argument-dependent name lookup (ADL)
 // (aka Koenig lookup). The rule is that friend declarations are visible
