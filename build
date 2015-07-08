@@ -173,13 +173,21 @@ function setupDefaultDddCfg {
 	# If the user doesn't have a ~/.ddd/init, we'll provide one a bit 
 	# friendlier than the default:
 
-	if [[ ! -f ${HOME}/.ddd/init ]]; then
+	if [[ ! -d ${HOME}/.ddd ]]; then
 		mkdir -p ${HOME}/.ddd
-		cp .ddd-init-baseline ${HOME}/.ddd/init
 	fi
+	(
+		cd ${HOME}/ddd
+		if [[ -f init ]]; then
+			cp init init.$$.backup
+			cp $buildRoot/.ddd-init-baseline ${HOME}/.ddd/init
+		fi
+	)
 }
 
-function main {
+
+
+if [[ -z $sourceMe ]]; then
 	if [[ ! -f ./dddbash-root ]]; then
 		errExit "This script must run from the dddbash code root"
 	fi
@@ -201,15 +209,7 @@ function main {
 
 	installLinks
 	setupDefaultDddCfg
-}
-
-function helloMsg {
 	echo "dddbash installed successfully."
-}
-
-if [[ -z $sourceMe ]]; then
-	main "$@"
-	helloMsg
 fi
 
 
